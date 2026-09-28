@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TIME IS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #ffffff;
+    --sub: rgba(255,255,255,0.75);
+    --accent: #ffd166;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: #111;
+    font-family: 'Fredoka', sans-serif;
+  }
+  .stage {
+    position: relative;
+    min-height: 100%;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 24px;
+  }
+  .bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('bg-time.jpg');
+    background-size: cover;
+    background-position: center 40%;
+    z-index: 0;
+  }
+  .scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(10,12,20,0.55) 0%, rgba(10,12,20,0.35) 30%, rgba(10,12,20,0.65) 68%, rgba(8,10,16,0.88) 100%);
+    z-index: 1;
+  }
+  .content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: clamp(10px, 2.4vw, 22px);
+    max-width: 1100px;
+    width: 100%;
+  }
+  .eyebrow {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: clamp(13px, 1.8vw, 18px);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--sub);
+    margin: 0;
+  }
+  .title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: clamp(24px, 4.6vw, 46px);
+    line-height: 1.1;
+    color: var(--ink);
+    margin: 0;
+    text-shadow: 0 4px 30px rgba(0,0,0,0.45);
+  }
+  .title .accent { color: var(--accent); }
+
+  .clockbox {
+    border: 2px solid rgba(255,255,255,0.55);
+    border-radius: 16px;
+    padding: clamp(14px, 3vw, 30px) clamp(16px, 5vw, 56px);
+    margin-top: clamp(10px, 2vw, 18px);
+    background: rgba(0,0,0,0.18);
+  }
+  .clock {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: clamp(2px, 1vw, 10px);
+    flex-wrap: nowrap;
+  }
+  .unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .num {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: clamp(38px, 9.5vw, 108px);
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    text-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    font-variant-numeric: tabular-nums;
+  }
+  .label {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 500;
+    font-size: clamp(10px, 1.2vw, 13px);
+    color: var(--sub);
+    margin-top: 6px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .colon {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 7vw, 84px);
+    color: rgba(255,255,255,0.55);
+    transform: translateY(-6px);
+    padding: 0 2px;
+  }
+
+  .wib {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: clamp(12px, 1.6vw, 15px);
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    align-self: flex-start;
+    margin-top: 4px;
+    margin-left: 10px;
+  }
+
+  .done {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: clamp(26px, 5.4vw, 56px);
+    color: var(--accent);
+    text-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  }
+
+  .switcher {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 18px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: inline-flex;
+    background: rgba(20,22,18,0.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 2px;
+    max-width: calc(100vw - 24px);
+    overflow-x: auto;
+  }
+  .switcher a {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: clamp(10px, 1.3vw, 13px);
+    letter-spacing: 0.04em;
+    color: var(--sub);
+    text-decoration: none;
+    padding: 9px 16px;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: color 0.15s ease, background 0.15s ease;
+    cursor: pointer;
+  }
+  .switcher a:hover {
+    color: #1a1a1a;
+    background: rgba(255,209,102,0.35);
+  }
+  .switcher a.active {
+    background: var(--accent);
+    color: #1a1a1a;
+  }
+  .switcher a.active:hover { background: var(--accent); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .content { animation: rise 0.7s ease-out; }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 480px) {
+    .switcher a { padding: 8px 11px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+  <nav class="switcher">
+    <a href="index.html">OJT COUNTDOWN</a>
+    <a href="time.html" class="active">TIME IS</a>
+    <a href="timer.html">TIMER</a>
+    <a href="absen.html">ABSEN!</a>
+  </nav>
+  <div class="stage">
+    <div class="bg"></div>
+    <div class="scrim"></div>
+    <div class="content">
+      <p class="eyebrow">🕐</p>
+      <h1 class="title">TIME IS</h1>
+
+      <div class="clockbox"><div id="clockWrap"></div></div>
+    </div>
+  </div>
+
+<script>
+  function render(){
+    const now = new Date();
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Jakarta',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    }).formatToParts(now);
+    const get = (t) => parts.find(p => p.type === t).value;
+    const hh = get('hour'), mm = get('minute'), ss = get('second');
+
+    document.getElementById('clockWrap').innerHTML = `
+      <div class="clock">
+        <div class="unit"><div class="num">${hh}</div><div class="label">Jam</div></div>
+        <div class="colon">:</div>
+        <div class="unit"><div class="num">${mm}</div><div class="label">Menit</div></div>
+        <div class="colon">:</div>
+        <div class="unit"><div class="num">${ss}</div><div class="label">Detik</div></div>
+        <div class="wib">WIB</div>
+      </div>
+    `;
+  }
+  render();
+  setInterval(render, 1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ABSEN!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sub: rgba(255,255,255,0.75);
+    --accent: #ffd166;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: #ffffff;
+    font-family: 'Fredoka', sans-serif;
+  }
+  .stage {
+    position: fixed;
+    inset: 0;
+    background: #ffffff url('absen.jpg') center / contain no-repeat;
+  }
+
+  .switcher {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 18px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: inline-flex;
+    background: rgba(20,22,18,0.55);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 2px;
+    max-width: calc(100vw - 24px);
+    overflow-x: auto;
+  }
+  .switcher a {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: clamp(10px, 1.3vw, 13px);
+    letter-spacing: 0.04em;
+    color: var(--sub);
+    text-decoration: none;
+    padding: 9px 16px;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: color 0.15s ease, background 0.15s ease;
+    cursor: pointer;
+  }
+  .switcher a:hover { color: #1a1a1a; background: rgba(255,209,102,0.55); }
+  .switcher a.active { background: var(--accent); color: #1a1a1a; }
+  .switcher a.active:hover { background: var(--accent); }
+  @media (max-width: 480px) {
+    .switcher a { padding: 8px 11px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+  <nav class="switcher">
+    <a href="index.html">OJT COUNTDOWN</a>
+    <a href="time.html">TIME IS</a>
+    <a href="timer.html">TIMER</a>
+    <a href="absen.html" class="active">ABSEN!</a>
+  </nav>
+  <div class="stage"></div>
+</body>
+</html>

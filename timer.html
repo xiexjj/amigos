@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TIMER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0b1533;
+    --navy2: #101c40;
+    --ink: #ffffff;
+    --sub: rgba(255,255,255,0.7);
+    --accent: #ffd166;
+    --bright: #fff3c4;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Fredoka', sans-serif;
+  }
+  .stage {
+    position: relative;
+    min-height: 100%;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 24px;
+    background: linear-gradient(160deg, var(--navy) 0%, var(--navy2) 100%);
+    transition: background 0.6s ease;
+  }
+  .stage.alarm {
+    background: var(--bright);
+    animation: pulse 0.9s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.15); }
+  }
+  .stage.alarm .num,
+  .stage.alarm .colon,
+  .stage.alarm .title,
+  .stage.alarm .eyebrow { color: #1a1a1a; text-shadow: none; }
+  .stage.alarm .label { color: rgba(0,0,0,0.55); }
+  .stage.alarm .clockbox { border-color: rgba(0,0,0,0.4); background: rgba(255,255,255,0.25); }
+  .stage.alarm .preset,
+  .stage.alarm .manual input { background: rgba(0,0,0,0.08); color: #1a1a1a; }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: clamp(10px, 2vw, 18px);
+    max-width: 720px;
+    width: 100%;
+  }
+  .eyebrow {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: clamp(13px, 1.8vw, 18px);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--sub);
+    margin: 0;
+  }
+  .title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 5.4vw, 48px);
+    line-height: 1.05;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .clockbox {
+    border: 2px solid rgba(255,255,255,0.5);
+    border-radius: 16px;
+    padding: clamp(14px, 3vw, 26px) clamp(20px, 5vw, 50px);
+    margin-top: clamp(8px, 1.5vw, 14px);
+    background: rgba(255,255,255,0.06);
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+  .clock {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: clamp(2px, 1vw, 10px);
+  }
+  .unit { display: flex; flex-direction: column; align-items: center; }
+  .num {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: clamp(56px, 15vw, 130px);
+    line-height: 1;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    transition: color 0.4s ease;
+  }
+  .label {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 500;
+    font-size: clamp(10px, 1.2vw, 13px);
+    color: var(--sub);
+    margin-top: 4px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .colon {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: clamp(40px, 11vw, 100px);
+    color: rgba(255,255,255,0.5);
+    transform: translateY(-6px);
+  }
+
+  .presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: clamp(10px, 2vw, 18px);
+  }
+  .preset {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: clamp(13px, 1.6vw, 15px);
+    color: var(--ink);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 10px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .preset:hover { background: rgba(255,209,102,0.3); }
+  .preset.active { background: var(--accent); color: #1a1a1a; border-color: var(--accent); }
+
+  .manual {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 4px;
+  }
+  .manual input {
+    width: 90px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    text-align: center;
+    padding: 10px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.1);
+    color: var(--ink);
+    outline: none;
+  }
+  .manual span { color: var(--sub); font-size: 14px; }
+  .manual button {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.1);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .manual button:hover { background: rgba(255,209,102,0.3); }
+
+  .controls {
+    display: flex;
+    gap: 14px;
+    margin-top: clamp(12px, 2.4vw, 20px);
+  }
+  .controls button {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: clamp(14px, 1.8vw, 17px);
+    padding: 12px 34px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+  }
+  #startBtn { background: var(--ink); color: #1a1a1a; }
+  #startBtn:hover { opacity: 0.9; }
+  #resetBtn { background: rgba(255,255,255,0.15); color: var(--ink); border: 1px solid rgba(255,255,255,0.3); }
+  #resetBtn:hover { background: rgba(255,255,255,0.25); }
+
+  .switcher {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 18px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: inline-flex;
+    background: rgba(20,22,18,0.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 2px;
+    max-width: calc(100vw - 24px);
+    overflow-x: auto;
+  }
+  .switcher a {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: clamp(10px, 1.3vw, 13px);
+    letter-spacing: 0.04em;
+    color: var(--sub);
+    text-decoration: none;
+    padding: 9px 16px;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: color 0.15s ease, background 0.15s ease;
+    cursor: pointer;
+  }
+  .switcher a:hover { color: #1a1a1a; background: rgba(255,209,102,0.35); }
+  .switcher a.active { background: var(--accent); color: #1a1a1a; }
+  .switcher a.active:hover { background: var(--accent); }
+
+  .fsBtn {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 18px);
+    right: 18px;
+    z-index: 3;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20,22,18,0.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    color: var(--ink);
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .fsBtn:hover { background: rgba(255,209,102,0.3); color: #1a1a1a; }
+
+  /* Fullscreen mode: hide everything except the timer digits */
+  body.fs-active .switcher,
+  body.fs-active .fsBtn,
+  body.fs-active .eyebrow,
+  body.fs-active .title,
+  body.fs-active .presets,
+  body.fs-active .manual,
+  body.fs-active .controls {
+    display: none !important;
+  }
+  body.fs-active .clockbox {
+    border: none;
+    background: transparent;
+    padding: 0;
+  }
+  body.fs-active .num { font-size: clamp(80px, 22vw, 240px); }
+  body.fs-active .colon { font-size: clamp(60px, 17vw, 180px); }
+  body.fs-active .content { gap: 0; }
+  @media (max-width: 480px) {
+    .switcher a { padding: 8px 11px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+  <nav class="switcher">
+    <a href="index.html">OJT COUNTDOWN</a>
+    <a href="time.html">TIME IS</a>
+    <a href="timer.html" class="active">TIMER</a>
+    <a href="absen.html">ABSEN!</a>
+  </nav>
+  <button class="fsBtn" id="fsBtn" title="Fullscreen">⛶</button>
+  <div class="stage" id="stage">
+    <div class="content">
+      <p class="eyebrow" id="eyebrow">⏳ Set your timer</p>
+      <h1 class="title" id="title">TIMER</h1>
+
+      <div class="clockbox"><div id="clockWrap"></div></div>
+
+      <div class="presets" id="presets">
+        <button class="preset" data-min="15">15m</button>
+        <button class="preset" data-min="30">30m</button>
+        <button class="preset" data-min="45">45m</button>
+        <button class="preset active" data-min="60">1j</button>
+        <button class="preset" data-min="90">1.5j</button>
+        <button class="preset" data-min="120">2j</button>
+      </div>
+
+      <div class="manual">
+        <input type="number" id="manualInput" min="1" max="999" placeholder="Manual">
+        <span>menit</span>
+        <button id="setBtn">Set</button>
+      </div>
+
+      <div class="controls">
+        <button id="startBtn">Start</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  let durationSeconds = 60 * 60; // default 1 jam
+  let remainingSeconds = durationSeconds;
+  let intervalId = null;
+  let alarmIntervalId = null;
+  let running = false;
+  let audioCtx = null;
+
+  function two(n){ return String(n).padStart(2,'0'); }
+
+  function renderClock(){
+    const wrap = document.getElementById('clockWrap');
+    const h = Math.floor(remainingSeconds / 3600);
+    const m = Math.floor((remainingSeconds % 3600) / 60);
+    const s = remainingSeconds % 60;
+
+    let html = '<div class="clock">';
+    if (h > 0) {
+      html += `<div class="unit"><div class="num">${two(h)}</div><div class="label">Jam</div></div><div class="colon">:</div>`;
+    }
+    html += `<div class="unit"><div class="num">${two(m)}</div><div class="label">Menit</div></div>`;
+    html += `<div class="colon">:</div>`;
+    html += `<div class="unit"><div class="num">${two(s)}</div><div class="label">Detik</div></div>`;
+    html += '</div>';
+    wrap.innerHTML = html;
+  }
+
+  function setActivePreset(minutes){
+    document.querySelectorAll('.preset').forEach(btn => {
+      btn.classList.toggle('active', Number(btn.dataset.min) === minutes);
+    });
+  }
+
+  function setDuration(minutes){
+    stopAlarmVisual();
+    clearInterval(intervalId);
+    running = false;
+    document.getElementById('startBtn').textContent = 'Start';
+    durationSeconds = minutes * 60;
+    remainingSeconds = durationSeconds;
+    renderClock();
+  }
+
+  document.querySelectorAll('.preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const minutes = Number(btn.dataset.min);
+      setActivePreset(minutes);
+      setDuration(minutes);
+    });
+  });
+
+  document.getElementById('setBtn').addEventListener('click', () => {
+    const val = Number(document.getElementById('manualInput').value);
+    if (val > 0) {
+      setActivePreset(-1);
+      setDuration(val);
+    }
+  });
+  document.getElementById('manualInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('setBtn').click();
+  });
+
+  function ensureAudio(){
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function playBell(){
+    if (!audioCtx) return;
+    function ding(time){
+      const osc = audioCtx.createOscillator();
+      const osc2 = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc2.type = 'sine';
+      osc.frequency.value = 880;
+      osc2.frequency.value = 1318.5;
+      gain.gain.setValueAtTime(0.0001, time);
+      gain.gain.exponentialRampToValueAtTime(0.35, time + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + 1.1);
+      osc.connect(gain); osc2.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(time); osc2.start(time);
+      osc.stop(time + 1.2); osc2.stop(time + 1.2);
+    }
+    const now = audioCtx.currentTime;
+    ding(now);
+    ding(now + 0.85);
+    ding(now + 1.7);
+    ding(now + 2.55);
+  }
+
+  function stopAlarmVisual(){
+    document.getElementById('stage').classList.remove('alarm');
+    document.getElementById('eyebrow').textContent = '⏳ Set your timer';
+    document.getElementById('title').textContent = 'TIMER';
+    if (alarmIntervalId) {
+      clearInterval(alarmIntervalId);
+      alarmIntervalId = null;
+    }
+  }
+
+  function onFinish(){
+    clearInterval(intervalId);
+    running = false;
+    document.getElementById('startBtn').textContent = 'Stop Bel';
+    document.getElementById('stage').classList.add('alarm');
+    document.getElementById('eyebrow').textContent = '🔔 Waktu habis!';
+    document.getElementById('title').textContent = 'SELESAI!';
+    playBell();
+    alarmIntervalId = setInterval(playBell, 3500);
+  }
+
+  document.getElementById('startBtn').addEventListener('click', () => {
+    if (alarmIntervalId) {
+      // Alarm is ringing — this click stops the bell instead of starting a new run
+      stopAlarmVisual();
+      document.getElementById('startBtn').textContent = 'Start';
+      remainingSeconds = 0;
+      renderClock();
+      return;
+    }
+    if (running) {
+      clearInterval(intervalId);
+      running = false;
+      document.getElementById('startBtn').textContent = 'Start';
+      return;
+    }
+    if (remainingSeconds <= 0) return;
+    ensureAudio();
+    stopAlarmVisual();
+    running = true;
+    document.getElementById('startBtn').textContent = 'Pause';
+    intervalId = setInterval(() => {
+      remainingSeconds--;
+      renderClock();
+      if (remainingSeconds <= 0) onFinish();
+    }, 1000);
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    clearInterval(intervalId);
+    running = false;
+    document.getElementById('startBtn').textContent = 'Start';
+    remainingSeconds = durationSeconds;
+    stopAlarmVisual();
+    renderClock();
+  });
+
+  renderClock();
+
+  const fsBtn = document.getElementById('fsBtn');
+  const stageEl = document.getElementById('stage');
+
+  fsBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      stageEl.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    document.body.classList.toggle('fs-active', !!document.fullscreenElement);
+  });
+
+  // Tap/click anywhere while fullscreen exits back to controls
+  stageEl.addEventListener('click', () => {
+    if (document.fullscreenElement) document.exitFullscreen();
+  });
+</script>
+</body>
+</html>
