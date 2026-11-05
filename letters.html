@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Letters to Amigos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Semua class diawali "lta-" supaya tidak bentrok dengan CSS lama */
+:root{
+  --lta-sun:#eab308; --lta-amber:#f59e0b; --lta-butter:#fde047;
+  --lta-brown:#5b3a12; --lta-font:"Fredoka","Baloo 2",system-ui,sans-serif; --lta-gold:#b8860b; --lta-cream:#fffbeb;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--lta-font);color:var(--lta-brown);
+  background:var(--lta-cream);
+  background-image:radial-gradient(rgba(245,158,11,.14) 1.5px,transparent 1.5px);
+  background-size:26px 26px;min-height:100vh;overflow-x:hidden}
+
+/* ===== NAV (gaya pill seperti halaman utama) ===== */
+.lta-nav{display:flex;justify-content:center;padding:14px 12px;padding-top:max(14px,env(safe-area-inset-top));position:sticky;top:0;z-index:20}
+.lta-pill{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:6px;border-radius:999px;
+  background:rgba(60,60,60,.9);backdrop-filter:blur(6px);box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.lta-pill a{font-family:var(--lta-font);font-weight:700;font-size:.9rem;color:#fff;text-decoration:none;
+  text-transform:uppercase;padding:10px 20px;border-radius:999px;transition:background .2s}
+.lta-pill a:hover{background:rgba(255,255,255,.14)}
+.lta-pill a[aria-current="page"]{background:#ffd45e;color:#3b3b3b}
+@media(max-width:480px){.lta-pill a{padding:8px 13px;font-size:.76rem}}
+
+/* ===== HERO ===== */
+.lta-hero{position:relative;text-align:center;padding:56px 20px 28px}
+.lta-hero h1{margin:0;font-size:clamp(2rem,6vw,3.6rem);line-height:1.1;
+  background:linear-gradient(90deg,var(--lta-gold),var(--lta-amber),var(--lta-sun));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.lta-hero p{margin:12px auto 0;max-width:520px;font-style:italic;opacity:.85}
+.lta-corner{position:absolute;width:clamp(70px,14vw,130px);opacity:.9;animation:lta-sway 6s ease-in-out infinite}
+.lta-corner.tl{top:6px;left:6px}
+.lta-corner.tr{top:6px;right:6px;transform:scaleX(-1);animation-delay:-3s}
+@keyframes lta-sway{0%,100%{rotate:-4deg}50%{rotate:4deg}}
+.lta-divider{display:flex;align-items:center;gap:14px;max-width:420px;margin:18px auto 0;color:var(--lta-amber)}
+.lta-divider::before,.lta-divider::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,transparent,var(--lta-amber),transparent)}
+
+/* ===== GRID ===== */
+.lta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px;
+  max-width:1100px;margin:0 auto;padding:20px 18px 70px;list-style:none}
+.lta-card{all:unset;box-sizing:border-box;cursor:pointer;display:block;text-align:center;
+  background:#fff;padding:10px 10px 12px;border:2px solid #f3e3a0;border-radius:16px;
+  box-shadow:0 3px 10px rgba(91,58,18,.12);transition:transform .25s,box-shadow .25s,border-color .25s}
+.lta-card:hover,.lta-card:focus-visible{transform:translateY(-6px) scale(1.04);border-color:var(--lta-sun);
+  box-shadow:0 0 0 3px var(--lta-butter),0 12px 28px rgba(245,158,11,.5)}
+.lta-photo{aspect-ratio:1/1;border-radius:12px;overflow:hidden;background:#fef3c7}
+.lta-photo img,.lta-photo svg{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.lta-card:hover .lta-photo img{transform:scale(1.1)}
+.lta-name{display:block;margin-top:10px;font-weight:700;font-size:.95rem}
+
+/* ===== MODAL ===== */
+.lta-modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:16px;
+  background:rgba(60,35,5,.6);backdrop-filter:blur(3px)}
+.lta-modal.open{display:flex;animation:lta-fade .25s}
+@keyframes lta-fade{from{opacity:0}to{opacity:1}}
+.lta-dialog{position:relative;width:min(760px,100%);max-height:92vh;overflow:auto;display:grid;
+  grid-template-columns:240px 1fr;gap:22px;padding:26px;background:var(--lta-cream);
+  border:3px solid var(--lta-sun);border-radius:20px;box-shadow:0 0 40px rgba(253,224,71,.6);
+  animation:lta-pop .3s}
+@keyframes lta-pop{from{transform:scale(.9) translateY(14px);opacity:0}}
+.lta-dialog .lta-photo{border-radius:14px;border:4px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.lta-dialog h2{margin:0 0 10px;font-size:1.6rem;color:var(--lta-gold)}
+.lta-letter{white-space:pre-line;line-height:1.7;padding:16px 18px;border-radius:6px;min-height:150px;
+  background:#fffef5 repeating-linear-gradient(transparent 0 27px,rgba(245,158,11,.25) 27px 28px);
+  border-left:4px solid var(--lta-amber);box-shadow:inset 0 0 14px rgba(245,158,11,.12)}
+.lta-actions{display:flex;gap:8px;margin-top:14px}
+.lta-btn{cursor:pointer;border:0;border-radius:999px;padding:9px 18px;font:700 .9rem var(--lta-font);
+  background:var(--lta-butter);color:var(--lta-brown);transition:background .2s,transform .2s}
+.lta-btn:hover{background:var(--lta-sun);transform:translateY(-2px)}
+.lta-close{position:absolute;top:10px;right:10px;background:var(--lta-amber);color:#fff}
+@media(max-width:620px){.lta-dialog{grid-template-columns:1fr}.lta-dialog .lta-photo{max-width:220px;margin:0 auto}}
+
+/* ===== KELOPAK JATUH ===== */
+.lta-petals{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+.lta-petal{position:absolute;top:-30px;width:12px;height:20px;border-radius:50% 50% 50% 50%/70% 70% 30% 30%;
+  background:linear-gradient(var(--lta-butter),var(--lta-amber));opacity:.8;animation:lta-fall linear infinite}
+@keyframes lta-fall{to{transform:translate(var(--drift),110vh) rotate(540deg)}}
+@media(prefers-reduced-motion:reduce){.lta-petals{display:none}.lta-corner,.lta-card,.lta-dialog{animation:none;transition:none}}
+</style>
+</head>
+<body>
+
+<!-- Nav sama seperti halaman lain. SECRET = halaman ini -->
+<nav class="lta-nav" aria-label="Navigasi utama">
+  <div class="lta-pill">
+    <a href="index.html">OJT COUNTDOWN</a>
+    <a href="time.html">TIME IS</a>
+    <a href="timer.html">TIMER</a>
+    <a href="absen.html">ABSEN!</a>
+    <a href="letters.html" aria-current="page">SECRET</a>
+  </div>
+</nav>
+
+<div class="lta-petals" id="petals" aria-hidden="true"></div>
+
+<header class="lta-hero">
+  <svg class="lta-corner tl" viewBox="0 0 100 100" aria-hidden="true"><use href="#sunflower"/></svg>
+  <svg class="lta-corner tr" viewBox="0 0 100 100" aria-hidden="true"><use href="#sunflower"/></svg>
+  <h1>🌻 Letters to Amigos 🌻</h1>
+  <p>Satu surat untuk setiap sahabat. Klik fotonya untuk membaca pesannya.</p>
+  <div class="lta-divider">🌻</div>
+</header>
+
+<main>
+  <ul class="lta-grid" id="grid"></ul>
+</main>
+
+<div class="lta-modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-name">
+  <div class="lta-dialog">
+    <button class="lta-btn lta-close" id="m-close" aria-label="Tutup">✕ Close</button>
+    <div class="lta-photo" id="m-photo"></div>
+    <div>
+      <h2 id="m-name"></h2>
+      <div class="lta-letter" id="m-letter"></div>
+      <div class="lta-actions">
+        <button class="lta-btn" id="m-prev">← Sebelumnya</button>
+        <button class="lta-btn" id="m-next">Berikutnya →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ikon bunga matahari (dipakai ulang lewat <use>) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="sunflower" viewBox="0 0 100 100">
+    <g fill="#fde047" stroke="#f59e0b" stroke-width="1.5">
+      <g id="ring">
+        <ellipse cx="50" cy="16" rx="7" ry="14"/><ellipse cx="50" cy="16" rx="7" ry="14" transform="rotate(30 50 50)"/>
+        <ellipse cx="50" cy="16" rx="7" ry="14" transform="rotate(60 50 50)"/><ellipse cx="50" cy="16" rx="7" ry="14" transform="rotate(90 50 50)"/>
+        <ellipse cx="50" cy="16" rx="7" ry="14" transform="rotate(120 50 50)"/><ellipse cx="50" cy="16" rx="7" ry="14" transform="rotate(150 50 50)"/>
+        <ellipse cx="50" cy="16" rx="7" ry="14" transform="rotate(180 50 50)"/><ellipse cx="50" cy="16" rx="7" ry="14" transform="rotate(210 50 50)"/>
+        <ellipse cx="50" cy="16" rx="7" ry="14" transform="rotate(240 50 50)"/><ellipse cx="50" cy="16" rx="7" ry="14" transform="rotate(270 50 50)"/>
+        <ellipse cx="50" cy="16" rx="7" ry="14" transform="rotate(300 50 50)"/><ellipse cx="50" cy="16" rx="7" ry="14" transform="rotate(330 50 50)"/>
+      </g>
+    </g>
+    <circle cx="50" cy="50" r="17" fill="#5b3a12"/><circle cx="50" cy="50" r="10" fill="#7c4a12"/>
+  </symbol>
+</svg>
+
+<script>
+/* =====================================================
+   DATA ANGGOTA: EDIT DI SINI SAJA
+   - name  : nama lengkap
+   - photo : URL / path gambar, mis. "img/budi.jpg" (kosongkan = placeholder bunga)
+   - letter: isi surat. Pakai \n untuk baris baru
+   ===================================================== */
+const MEMBERS = [
+  { name: "Amigo 01", photo: "", letter: "Tulis suratmu untuk Amigo 01 di sini." },
+  { name: "Amigo 02", photo: "", letter: "Tulis suratmu untuk Amigo 02 di sini." },
+  { name: "Amigo 03", photo: "", letter: "Tulis suratmu untuk Amigo 03 di sini." },
+  { name: "Amigo 04", photo: "", letter: "Tulis suratmu untuk Amigo 04 di sini." },
+  { name: "Amigo 05", photo: "", letter: "Tulis suratmu untuk Amigo 05 di sini." },
+  { name: "Amigo 06", photo: "", letter: "Tulis suratmu untuk Amigo 06 di sini." },
+  { name: "Amigo 07", photo: "", letter: "Tulis suratmu untuk Amigo 07 di sini." },
+  { name: "Amigo 08", photo: "", letter: "Tulis suratmu untuk Amigo 08 di sini." },
+  { name: "Amigo 09", photo: "", letter: "Tulis suratmu untuk Amigo 09 di sini." },
+  { name: "Amigo 10", photo: "", letter: "Tulis suratmu untuk Amigo 10 di sini." },
+  { name: "Amigo 11", photo: "", letter: "Tulis suratmu untuk Amigo 11 di sini." },
+  { name: "Amigo 12", photo: "", letter: "Tulis suratmu untuk Amigo 12 di sini." },
+  { name: "Amigo 13", photo: "", letter: "Tulis suratmu untuk Amigo 13 di sini." },
+  { name: "Amigo 14", photo: "", letter: "Tulis suratmu untuk Amigo 14 di sini." },
+  { name: "Amigo 15", photo: "", letter: "Tulis suratmu untuk Amigo 15 di sini." },
+  { name: "Amigo 16", photo: "", letter: "Tulis suratmu untuk Amigo 16 di sini." },
+  { name: "Amigo 17", photo: "", letter: "Tulis suratmu untuk Amigo 17 di sini." },
+  { name: "Amigo 18", photo: "", letter: "Tulis suratmu untuk Amigo 18 di sini." },
+  { name: "Amigo 19", photo: "", letter: "Tulis suratmu untuk Amigo 19 di sini." },
+  { name: "Amigo 20", photo: "", letter: "Tulis suratmu untuk Amigo 20 di sini." },
+  { name: "Amigo 21", photo: "", letter: "Tulis suratmu untuk Amigo 21 di sini." },
+  { name: "Amigo 22", photo: "", letter: "Tulis suratmu untuk Amigo 22 di sini." },
+  { name: "Amigo 23", photo: "", letter: "Tulis suratmu untuk Amigo 23 di sini." },
+  { name: "Amigo 24", photo: "", letter: "Tulis suratmu untuk Amigo 24 di sini." },
+  { name: "Amigo 25", photo: "", letter: "Tulis suratmu untuk Amigo 25 di sini." },
+  { name: "Amigo 26", photo: "", letter: "Tulis suratmu untuk Amigo 26 di sini." },
+  { name: "Amigo 27", photo: "", letter: "Tulis suratmu untuk Amigo 27 di sini." },
+  { name: "Amigo 28", photo: "", letter: "Tulis suratmu untuk Amigo 28 di sini." },
+  { name: "Amigo 29", photo: "", letter: "Tulis suratmu untuk Amigo 29 di sini." },
+  { name: "Amigo 30", photo: "", letter: "Tulis suratmu untuk Amigo 30 di sini." },
+  { name: "Amigo 31", photo: "", letter: "Tulis suratmu untuk Amigo 31 di sini." },
+  { name: "Amigo 32", photo: "", letter: "Tulis suratmu untuk Amigo 32 di sini." },
+  { name: "Amigo 33", photo: "", letter: "Tulis suratmu untuk Amigo 33 di sini." },
+  { name: "Amigo 34", photo: "", letter: "Tulis suratmu untuk Amigo 34 di sini." },
+  { name: "Amigo 35", photo: "", letter: "Tulis suratmu untuk Amigo 35 di sini." },
+  { name: "Amigo 36", photo: "", letter: "Tulis suratmu untuk Amigo 36 di sini." },
+  { name: "Amigo 37", photo: "", letter: "Tulis suratmu untuk Amigo 37 di sini." },
+  { name: "Amigo 38", photo: "", letter: "Tulis suratmu untuk Amigo 38 di sini." },
+  { name: "Amigo 39", photo: "", letter: "Tulis suratmu untuk Amigo 39 di sini." },
+  { name: "Amigo 40", photo: "", letter: "Tulis suratmu untuk Amigo 40 di sini." },
+  { name: "Amigo 41", photo: "", letter: "Tulis suratmu untuk Amigo 41 di sini." },
+  { name: "Amigo 42", photo: "", letter: "Tulis suratmu untuk Amigo 42 di sini." },
+  { name: "Amigo 43", photo: "", letter: "Tulis suratmu untuk Amigo 43 di sini." },
+  { name: "Amigo 44", photo: "", letter: "Tulis suratmu untuk Amigo 44 di sini." },
+  { name: "Amigo 45", photo: "", letter: "Tulis suratmu untuk Amigo 45 di sini." }
+];
+
+/* ---------- Kode di bawah ini tidak perlu diubah ---------- */
+const $ = (id) => document.getElementById(id);
+const placeholder = '<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" fill="#fef3c7"/><use href="#sunflower" transform="translate(15 15) scale(.7)"/></svg>';
+
+function photoHTML(m) {
+  if (!m.photo) return placeholder;
+  const img = document.createElement("img");
+  img.src = m.photo; img.alt = "Foto " + m.name; img.loading = "lazy";
+  img.onerror = () => { img.parentElement.innerHTML = placeholder; };
+  return img;
+}
+function setPhoto(box, m) {
+  box.innerHTML = "";
+  const p = photoHTML(m);
+  typeof p === "string" ? (box.innerHTML = p) : box.appendChild(p);
+}
+
+/* Grid */
+const grid = $("grid");
+MEMBERS.forEach((m, i) => {
+  const li = document.createElement("li");
+  const btn = document.createElement("button");
+  btn.className = "lta-card"; btn.type = "button";
+  btn.setAttribute("aria-label", "Buka surat untuk " + m.name);
+  btn.innerHTML = '<div class="lta-photo"></div><span class="lta-name"></span>';
+  btn.querySelector(".lta-name").textContent = m.name;
+  setPhoto(btn.querySelector(".lta-photo"), m);
+  btn.addEventListener("click", () => openModal(i));
+  li.appendChild(btn); grid.appendChild(li);
+});
+
+/* Modal */
+const modal = $("modal"); let current = 0, lastFocus = null;
+function render(i) {
+  current = (i + MEMBERS.length) % MEMBERS.length;
+  const m = MEMBERS[current];
+  $("m-name").textContent = m.name;
+  $("m-letter").textContent = m.letter;
+  setPhoto($("m-photo"), m);
+}
+function openModal(i) {
+  lastFocus = document.activeElement; render(i);
+  modal.classList.add("open"); document.body.style.overflow = "hidden"; $("m-close").focus();
+}
+function closeModal() {
+  modal.classList.remove("open"); document.body.style.overflow = ""; lastFocus && lastFocus.focus();
+}
+$("m-close").addEventListener("click", closeModal);
+$("m-prev").addEventListener("click", () => render(current - 1));
+$("m-next").addEventListener("click", () => render(current + 1));
+modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+document.addEventListener("keydown", (e) => {
+  if (!modal.classList.contains("open")) return;
+  if (e.key === "Escape") closeModal();
+  if (e.key === "ArrowLeft") render(current - 1);
+  if (e.key === "ArrowRight") render(current + 1);
+});
+
+/* Kelopak jatuh */
+const petals = $("petals");
+for (let i = 0; i < 18; i++) {
+  const p = document.createElement("span");
+  p.className = "lta-petal";
+  p.style.left = Math.random() * 100 + "vw";
+  p.style.setProperty("--drift", (Math.random() * 160 - 80) + "px");
+  p.style.animationDuration = 9 + Math.random() * 9 + "s";
+  p.style.animationDelay = -Math.random() * 15 + "s";
+  p.style.scale = 0.7 + Math.random() * 0.8;
+  petals.appendChild(p);
+}
+</script>
+</body>
+</html>
